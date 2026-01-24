@@ -1,136 +1,134 @@
-# St (Suckless Terminal)
+# Kris's build of st
 
-## Xresources live-reload demo
+The [suckless terminal (st)](https://st.suckless.org/) with additional features that make it the best terminal emulator.
 
-<img src="https://github.com/siduck/dotfiles/blob/all/rice%20flex/live-reloadXresources.gif"> <br><br>
+---
 
-## Dependencies
+## Features
 
-```
-# Void
-xbps-install libXft-devel libX11-devel harfbuzz-devel libXext-devel libXrender-devel libXinerama-devel gd-devel
+### Clipboard
 
-# Debian (and ubuntu probably)
-apt install build-essential libxft-dev libharfbuzz-dev libgd-dev
+| Keybinding | Action |
+|------------|--------|
+| `Ctrl+Shift+c` | Copy selection |
+| `Ctrl+Shift+v` | Paste |
+| `Right Click` | Paste from clipboard |
 
-# Nix
-nix develop github:siduck/st
+### Scrollback
 
+| Keybinding | Action |
+|------------|--------|
+| `Alt+k` | Scroll up |
+| `Alt+j` | Scroll down |
+
+### Font & Zoom
+
+| Keybinding | Action |
+|------------|--------|
+| `Alt+,` | Zoom in |
+| `Alt+.` | Zoom out |
+| `Alt+g` | Reset to default size |
+
+### Transparency
+
+| Keybinding | Action |
+|------------|--------|
+| `Alt+s` | Increase transparency |
+| `Alt+a` | Decrease transparency |
+| `Alt+m` | Reset transparency |
+
+### Other
+
+| Keybinding | Action |
+|------------|--------|
+| `Mod+Shift+Enter` | Spawn new terminal in current directory |
+
+---
+
+## Patches
+
+| Patch | Description |
+|-------|-------------|
+| ligatures | HarfBuzz ligature support |
+| sixel | Sixel graphics support (check sixel branch) |
+| scrollback | Scroll history |
+| clipboard | Clipboard integration |
+| alpha | Transparency support with configurable opacity |
+| boxdraw | Render box-drawing characters without font glyphs |
+| patch_column | Doesn't cut text while resizing |
+| font2 | Secondary font support (emoji fallback) |
+| right click paste | Paste with right click |
+| newterm | Spawn new terminal in current directory |
+| anygeometry | Dynamic geometry/borders |
+| xresources | Live reload colors/settings from Xresources |
+| sync | Better draw timing to reduce flicker/tearing |
+| live reload | Change colors/fonts on the fly |
+| swapmouse | Swap mouse buttons |
+
+---
+
+## Appearance
+
+- **Default font:** JetBrainsMono Nerd Font
+- **Xresources:** Supports dynamic colors via `~/.Xdefaults` or `~/.Xresources`
+- **Live reload:** `xrdb merge ~/.Xresources && kill -USR1 $(pidof st)`
+
+---
+
+## Installation
+
+### Dependencies
+
+```bash
 # Arch
 pacman -S gd
 
-# Fedora (or Red-Hat based)
+# Debian/Ubuntu
+apt install build-essential libxft-dev libharfbuzz-dev libgd-dev
+
+# Fedora
 dnf install gd-devel libXft-devel
 
-# SUSE (or openSUSE)
-zypper in -t pattern devel_basis
-zypper in gd-devel libXft-devel harfbuzz-devel
-
-# Install font-symbola and libXft-bgra
+# Void
+xbps-install libXft-devel libX11-devel harfbuzz-devel libXext-devel libXrender-devel libXinerama-devel gd-devel
 ```
 
-## Try it out!
+### Build
 
-Before you install st on your system, you might want to try it out first.
-To do so, simply run (requires [Nix](https://nixos.org/download.html))
-`nix run github:siduck/st`
-
-## Install
-
-```
-git clone https://github.com/siduck/st.git
+```bash
+git clone https://github.com/krisyotam/st
 cd st
-(change the compiler if you cant use c99 to compile: sed -i 's/^#\ CC\ =\ c99/CC=gcc/' config.mk)
 sudo make install
-xrdb merge pathToXresourcesFile
+xrdb merge ~/.Xresources
 ```
 
-(note : put the xrdb merge command in your wm's autostart or similar)
+> Add the `xrdb merge` command to your WM's autostart.
 
-### Using Nix flakes
+> Requires a compositor (`xcompmgr`, `picom`, etc.) for transparency.
 
-Add `st.url = "github:siduck/st";` to your inputs and install `inputs.st.packages."${system}".st-snazzy` package
+---
 
-## Fonts
+## Configuration
 
-- Install JetbrainsMono Mono Nerd Font or any nerd font from [here](https://www.nerdfonts.com/font-downloads)
+### Xresources
 
-## Patches:
+This build reads settings from `~/.Xdefaults` or `~/.Xresources`. Changes reload live with:
 
-- Ligatures
-- sixel (check sixel branch)
-- scrollback
-- Clipboard
-- Alpha(Transparency)
-- Boxdraw
-- patch_column ( doesnt cut text while resizing)
-- font2
-- right click paste
-- st desktop entry
-- newterm
-- anygeometry
-- xresources
-- sync patch ( Better draw timing to reduce flicker/tearing and improve animation smoothness )
-- live reload ( change colors/fonts on the fly )
-- st-swapmouse
-  <br>
-
-## Xresources live-reload
-
-```
-# make an alias for this command
-
-alias rel="xrdb merge pathToXresourcesFile && kill -USR1 $(pidof st)"
+```bash
+xrdb merge ~/.Xresources && kill -USR1 $(pidof st)
 ```
 
-## Ram usage comparison with other terminals and speed test
+---
 
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/rice%20flex/terminal_ramUsage.jpg"> <br><br>
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/rice%20flex/speedTest.png"> <br><br>
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/rice%20flex/speedTest1.png"> <br><br>
+## Other Suckless Repos
 
-( note : This benchmark was done on my low-end machine which has a pentium cpu so the speed results might vary )
+- [dwm](https://github.com/krisyotam/dwm) - dynamic window manager
+- [dwmblocks](https://github.com/krisyotam/dwmblocks) - modular status bar
+- [surf](https://github.com/krisyotam/surf) - simple web browser
 
-## Default Keybindings<br>
+---
 
-<pre>
-ctrl + shift + c        Copy  <br>
-ctrl + shift + v        Paste <br>
-right click on the terminal ( will paste the copied thing )
+## Contact
 
-(Zoom)
-alt  + comma            Zoom in <br>
-alt  + .                Zoom out <br>
-alt  + g                Reset Zoom<br>
-
-(Transparency)
-alt  + s                Increase Transparency<br>
-alt  + a                Decrease Transparency<br>
-alt  + m                Reset Transparency<br>
-
-alt + k                 scroll down
-alt + j                 scroll up
-
-mod + shift + enter    open a new terminal with same cwd ( current working directory )
-</pre>
-
-you can change all of these in config.h
-<br>
-
-## Themes/Fonts used
-
-- ls-icons: https://github.com/Yash-Handa/logo-ls <br>
-- Xresources: onedark (just `xrdb merge xresourcesfile`, do this everytime you make any change to xresources file) from this repo itself.<br>
-- Font: JetbrainsMono Nerd Font + material design icon fonts
-
-## Screenshots:
-
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/misc/delete_this/bruh.png"> <br><br>
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/misc/delete_this/ithree0-36-43.png"> <br><br>
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/misc/delete_this/two7-00.png"> <br><br>
-<img src="https://raw.githubusercontent.com/siduck/dotfiles/all/misc/delete_this/u.png"> <br><hr>
-
-# Credits
-
-- [live-reload](https://github.com/nimaipatel/st)
-- [patch_column](https://github.com/nimaipatel/st/blob/all/patches/7672445bab01cb4e861651dc540566ac22e25812.diff)
+- Kris Yotam <krisyotam@protonmail.com>
+- [https://krisyotam.com](https://krisyotam.com)
