@@ -1,68 +1,213 @@
-# dwm-flexipatch
+# Kris's build of dwm
 
-My personal build of dwm using [dwm-flexipatch](https://github.com/bakkeby/dwm-flexipatch). This uses preprocessor directives to decide whether or not to include a patch during build time, making patch management clean and maintainable.
+My build of dwm, now using [dwm-flexipatch](https://github.com/bakkeby/dwm-flexipatch) for easier patch management via preprocessor directives.
 
-## Configuration
+---
 
-All patch toggles are in `patches.h`. To enable or disable a patch, change the value from 0 to 1 (or vice versa):
+## Bindings
 
-```c
-#define VANITYGAPS_PATCH 1  // Enabled
-#define SYSTRAY_PATCH 0     // Disabled
-```
+The MOD key is set to the Super (Windows) key.
 
-## Enabled Patches
+### Essential
 
-### Functionality
-- **BAR_DWMBLOCKS_PATCH** - Clickable status bar integration with dwmblocks
-- **COOL_AUTOSTART_PATCH** - Run commands on dwm startup (starts dwmblocks)
-- **CYCLELAYOUTS_PATCH** - Cycle through all layouts
-- **PERTAG_PATCH** - Per-tag layouts, nmaster, and mfact
-- **RESTARTSIG_PATCH** - Restart dwm in place with kill -HUP
-- **SCRATCHPADS_PATCH** - Multiple scratchpad windows (spterm, spcalc)
-- **SHIFTVIEW_PATCH** - Circular shift through tags
-- **SHIFTTAG_PATCH** - Move clients to adjacent tags
-- **STACKER_PATCH** - Comprehensive stack management (focusstack/pushstack)
-- **STICKY_PATCH** - Make windows visible on all tags
-- **SWALLOW_PATCH** - Terminal window swallowing
-- **TOGGLEFULLSCREEN_PATCH** - Toggle fullscreen with single key
-- **VANITYGAPS_PATCH** - Configurable inner/outer gaps
-- **XRESOURCES_PATCH** - Load colors and settings from Xresources
-- **CFACTS_PATCH** - Resize clients in stack with different weights
+| Keybinding | Action |
+|------------|--------|
+| `MOD+Return` | Spawn terminal (st) |
+| `MOD+d` | Spawn dmenu |
+| `MOD+q` | Kill focused window |
+| `MOD+b` | Toggle bar |
+| `MOD+j/k` | Focus next/previous window |
+| `MOD+h/l` | Decrease/increase master area size |
+| `MOD+Tab` | Switch to last viewed tag |
+| `MOD+1-9` | View tag 1-9 |
+| `MOD+Shift+1-9` | Move window to tag 1-9 |
+| `MOD+0` | View all tags |
+| `MOD+Shift+0` | Make window sticky to all tags |
+
+### Applications
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+w` | Open browser (librewolf) |
+| `MOD+Shift+w` | Open nmtui (network manager) |
+| `MOD+r` | Open lf (file manager) |
+| `MOD+Shift+r` | Open htop |
+| `MOD+n` | Open nvim |
+| `MOD+Shift+n` | Open newsboat |
+| `MOD+m` | Open ncmpcpp (music player) |
+| `MOD+Shift+m` | Toggle mute |
+| `MOD+BackSpace` | System actions menu (sysact) |
+| `MOD+Shift+q` | System actions menu (sysact) |
+
+### Scratchpads
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+Shift+Return` | Toggle scratchpad terminal |
+| `MOD+'` | Toggle scratchpad calculator (bc) |
+
+### Window Management
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+Shift+j/k` | Move window down/up in stack |
+| `MOD+Shift+Return` | Zoom (swap with master) |
+| `MOD+Shift+Space` | Toggle floating |
+| `MOD+f` | Toggle fullscreen |
+| `MOD+s` | Toggle sticky |
+| `MOD+o` | Increase number of masters |
+| `MOD+Shift+o` | Decrease number of masters |
+| `MOD+Ctrl+e` | Hide window |
+| `MOD+Ctrl+Shift+e` | Restore hidden window |
 
 ### Layouts
-- **TILE_LAYOUT** - Default master/stack
-- **MONOCLE_LAYOUT** - Single window fullscreen
-- **BSTACK_LAYOUT** - Master on top, stack below
-- **CENTEREDMASTER_LAYOUT** - Master centered
-- **CENTEREDFLOATINGMASTER_LAYOUT** - Floating centered master
-- **DECK_LAYOUT** - Stack as monocle
-- **FIBONACCI_SPIRAL_LAYOUT** - Spiral arrangement
-- **FIBONACCI_DWINDLE_LAYOUT** - Dwindle arrangement
 
-## Custom Settings
+| Keybinding | Action |
+|------------|--------|
+| `MOD+t` | Tile layout |
+| `MOD+Shift+t` | Bstack layout |
+| `MOD+y` | Spiral layout |
+| `MOD+Shift+y` | Dwindle layout |
+| `MOD+u` | Deck layout |
+| `MOD+Shift+u` | Monocle layout |
+| `MOD+i` | Centered master layout |
+| `MOD+Shift+i` | Centered floating master |
+| `MOD+Ctrl+g` | Gapless grid |
+| `MOD+Ctrl+Shift+t` | Floating layout |
+| `MOD+Space` | Toggle last layout |
+| `MOD+Ctrl+,/.` | Cycle layouts prev/next |
 
-- **Border:** 3px, red selection (#770000)
-- **Gaps:** 20h/10v inner, 10h/30v outer
-- **Font:** monospace:size=11 + NotoColorEmoji
-- **Autostart:** dwmblocks
-- **Scratchpads:** spterm (terminal), spcalc (bc calculator)
+### Gaps
 
-## Dependencies
+| Keybinding | Action |
+|------------|--------|
+| `MOD+a` | Toggle gaps |
+| `MOD+Shift+a` | Reset gaps to default |
+| `MOD+Ctrl+i/d` | Increase/decrease all gaps |
+| `MOD+Shift+i` | Increase inner gaps |
+| `MOD+Ctrl+Shift+i` | Decrease inner gaps |
+| `MOD+Ctrl+o` | Increase outer gaps |
+| `MOD+Ctrl+Shift+o` | Decrease outer gaps |
+
+### Resize (cfact)
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+Shift+h` | Increase cfact |
+| `MOD+Shift+l` | Decrease cfact |
+| `MOD+Ctrl+Return` | Reset cfact |
+
+### Multi-Monitor
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+,/.` | Focus prev/next monitor |
+| `MOD+Shift+,/.` | Move window to prev/next monitor |
+| `MOD+Left/Right` | Shift view to prev/next tag |
+
+### Border
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+Shift+-` | Decrease border size |
+| `MOD+Shift+p` | Increase border size |
+
+### Screenshots
+
+| Keybinding | Action |
+|------------|--------|
+| `Print` | Full screenshot |
+| `Shift+Print` | Selection screenshot (maimpick) |
+| `MOD+Print` | Record screen (dmenurecord) |
+| `MOD+Shift+Print` | Kill recording |
+
+### Media Keys
+
+| Keybinding | Action |
+|------------|--------|
+| `XF86AudioRaiseVolume` | Volume up |
+| `XF86AudioLowerVolume` | Volume down |
+| `XF86AudioMute` | Toggle mute |
+| `XF86MonBrightnessUp` | Brightness up |
+| `XF86MonBrightnessDown` | Brightness down |
+
+### System
+
+| Keybinding | Action |
+|------------|--------|
+| `MOD+Ctrl+r` | Restart dwm |
+| `MOD+Ctrl+w` | Toggle tab mode |
+
+### Mouse
+
+| Click | Action |
+|-------|--------|
+| `MOD+Left Click` | Move or place window |
+| `MOD+Middle Click` | Toggle floating |
+| `MOD+Right Click` | Resize window |
+| `Ctrl+Left Click` | Drag mfact |
+| `Ctrl+Right Click` | Drag cfact |
+
+---
+
+## Patches and Features
+
+This build uses **dwm-flexipatch** for patch management. Toggle patches in `patches.h`:
+
+```c
+#define VANITYGAPS_PATCH 1   // enabled
+#define SYSTRAY_PATCH 0      // disabled
+```
+
+### Enabled Patches
+
+| Patch | Description |
+|-------|-------------|
+| vanitygaps | Gaps across all layouts with configurable inner/outer gaps |
+| swallow | Terminals swallow windows spawned by child processes |
+| scratchpads | Dropdown terminal and calculator accessible via keybind |
+| sticky | Make windows visible on all tags |
+| xresources | Read colors and config from ~/.Xresources at startup |
+| stacker | Move windows up/down in the stack (focusstack/pushstack) |
+| shiftview | Cycle through tags with arrow keys |
+| shifttag | Move windows to adjacent tags |
+| dwmblocks | Clickable status bar with signal support |
+| cfacts | Resize individual windows in the stack |
+| cyclelayouts | Cycle through layouts with keybind |
+| restartsig | Restart dwm in place without losing windows |
+| pertag | Each tag remembers its own layout settings |
+| togglefullscreen | Toggle fullscreen on focused window |
+| cool_autostart | Run commands on dwm startup (starts dwmblocks) |
+
+### Layouts
+
+- tile, monocle, bstack
+- centeredmaster, centeredfloatingmaster
+- deck, spiral, dwindle
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/krisyotam/dwm.git
+cd dwm
+sudo make install
+```
+
+There is also a `PKGBUILD` usable on distributions with pacman. Run `makepkg -si` instead of `sudo make install`.
+
+### Dependencies
 
 ```bash
 # Required for swallow patch
 pacman -S libxcb xcb-util
 ```
 
-## Installation
-
-```bash
-make clean install
-```
+---
 
 ## My Other Suckless Repos
 
-- [st](https://github.com/krisyotam/st) - Simple Terminal (st-flexipatch with sixel)
-- [dmenu](https://github.com/krisyotam/dmenu) - Dynamic Menu (dmenu-flexipatch)
-- [dwmblocks](https://github.com/krisyotam/dwmblocks) - Status bar blocks
+- [st](https://github.com/krisyotam/st) - simple terminal (st-flexipatch with sixel)
+- [dmenu](https://github.com/krisyotam/dmenu) - application launcher (dmenu-flexipatch)
+- [dwmblocks](https://github.com/krisyotam/dwmblocks) - modular status bar
