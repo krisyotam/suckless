@@ -1,0 +1,7 @@
+*.o
+*.orig
+*.rej
+*.tar.gz
+dwm
+dwm-msg
+config.h
