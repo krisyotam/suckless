@@ -1,5 +1,11 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
+/* Constants */
+#define MYTERM "st"
+#define MYBROWSER "librewolf"
+
 /* Helper macros for spawning commands */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 #define CMD(...)   { .v = (const char*[]){ __VA_ARGS__, NULL } }
@@ -1050,6 +1056,38 @@ ResourcePref resources[] = {
 
 static const Key keys[] = {
 	/* modifier                     key            function                argument */
+
+	/* Custom keybindings */
+	/* Audio and brightness */
+	{ 0,                            XF86XK_AudioLowerVolume, spawn,        SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)") },
+	{ 0,                            XF86XK_AudioRaiseVolume, spawn,        SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)") },
+	{ 0,                            XF86XK_AudioMute,        spawn,        SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
+	{ 0,                            XF86XK_MonBrightnessUp,  spawn,        {.v = (const char*[]){ "light", "-A", "5", NULL } } },
+	{ 0,                            XF86XK_MonBrightnessDown,spawn,        {.v = (const char*[]){ "light", "-U", "5", NULL } } },
+
+	/* Screenshots */
+	{ 0,                            XK_Print,      spawn,                  SHCMD("maim pic-full-$(date '+%y%m%d-%H%M-%S').png") },
+	{ ShiftMask,                    XK_Print,      spawn,                  {.v = (const char*[]){ "maimpick", NULL } } },
+	{ MODKEY,                       XK_Print,      spawn,                  {.v = (const char*[]){ "dmenurecord", NULL } } },
+	{ MODKEY|ShiftMask,             XK_Print,      spawn,                  {.v = (const char*[]){ "dmenurecord", "kill", NULL } } },
+
+	/* Applications */
+	{ MODKEY,                       XK_d,          spawn,                  {.v = dmenucmd } },
+	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } },
+	{ MODKEY,                       XK_w,          spawn,                  {.v = (const char*[]){ MYBROWSER, NULL } } },
+	{ MODKEY|ShiftMask,             XK_w,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "nmtui", NULL } } },
+	{ MODKEY,                       XK_r,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "lf", NULL } } },
+	{ MODKEY|ShiftMask,             XK_r,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "htop", NULL } } },
+	{ MODKEY,                       XK_n,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "nvim", NULL } } },
+	{ MODKEY|ShiftMask,             XK_n,          spawn,                  SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
+	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "ncmpcpp", NULL } } },
+	{ MODKEY|ShiftMask,             XK_m,          spawn,                  SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
+
+	/* System */
+	{ MODKEY,                       XK_BackSpace,  spawn,                  {.v = (const char*[]){ "sysact", NULL } } },
+	{ MODKEY|ShiftMask,             XK_q,          spawn,                  {.v = (const char*[]){ "sysact", NULL } } },
+	{ MODKEY,                       XK_q,          killclient,             {0} },
+
 	#if KEYMODES_PATCH
 	{ MODKEY,                       XK_Escape,     setkeymode,             {.ui = COMMANDMODE} },
 	#endif // KEYMODES_PATCH
