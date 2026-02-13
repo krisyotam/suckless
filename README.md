@@ -207,7 +207,7 @@ img2sixel /path/to/image.png
 
 ---
 
-## Other Suckless Repos
+## My Other Suckless Repos
 
 - [dwm](https://github.com/krisyotam/dwm) - dynamic window manager
 - [dwmblocks](https://github.com/krisyotam/dwmblocks) - modular status bar
