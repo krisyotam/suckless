@@ -31,7 +31,6 @@
     X("", "sb-nettraf", 1, 16)                       \
     X("", "sb-internet", 5, 4)                       \
     X("", "sb-volume", 0, 10)                        \
-    X("", "sb-battery", 5, 3)                        \
     X("", "sb-clock", 60, 1)                         \
     X("", "sb-dashboard", 0, 11)
 
