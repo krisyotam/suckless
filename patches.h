@@ -38,7 +38,7 @@
 #define CARET_WIDTH_PATCH 0
 
 /* Case-insensitive by default. */
-#define CASEINSENSITIVE_PATCH 1
+#define CASEINSENSITIVE_PATCH 0
 
 /* Centers dmenu in the middle of the screen. */
 #define CENTER_PATCH 1
