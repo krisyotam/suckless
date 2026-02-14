@@ -16,6 +16,22 @@ autostart_exec()
 
 	autostart_pids = malloc(autostart_len * sizeof(pid_t));
 	for (p = autostart; *p; i++, p++) {
+		/* kill any existing instance before starting a new one (seamless restart) */
+		FILE *cmd;
+		char pidline[256];
+		pid_t oldpid;
+		int len = snprintf(pidline, sizeof(pidline), "pidof -s %s", *p);
+		if (len > 0 && (size_t)len < sizeof(pidline) && (cmd = popen(pidline, "r"))) {
+			if (fgets(pidline, sizeof(pidline), cmd))  {
+				oldpid = (pid_t)atol(pidline);
+				if (oldpid > 0) {
+					kill(oldpid, SIGTERM);
+					waitpid(oldpid, NULL, WNOHANG);
+				}
+			}
+			pclose(cmd);
+		}
+
 		if ((autostart_pids[i] = fork()) == 0) {
 			setsid();
 

@@ -1327,13 +1327,19 @@ cleanup(void)
 	#endif // SEAMLESS_RESTART_PATCH
 
 	#if COOL_AUTOSTART_PATCH
-	/* kill child processes */
-	for (i = 0; i < autostart_len; i++) {
-		if (0 < autostart_pids[i]) {
-			kill(autostart_pids[i], SIGTERM);
-			waitpid(autostart_pids[i], NULL, 0);
+	/* kill child processes, but not on restart (autostart_exec will handle it) */
+	#if RESTARTSIG_PATCH
+	if (!restart) {
+	#endif // RESTARTSIG_PATCH
+		for (i = 0; i < autostart_len; i++) {
+			if (0 < autostart_pids[i]) {
+				kill(autostart_pids[i], SIGTERM);
+				waitpid(autostart_pids[i], NULL, 0);
+			}
 		}
+	#if RESTARTSIG_PATCH
 	}
+	#endif // RESTARTSIG_PATCH
 	#endif // COOL_AUTOSTART_PATCH
 
 	selmon->lt[selmon->sellt] = &foo;
