@@ -1255,7 +1255,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_x,          killunsel,              {0} },
 	#endif // KILLUNSEL_PATCH
 	#if SELFRESTART_PATCH
-	{ MODKEY|ShiftMask,             XK_r,          self_restart,           {0} },
+	/* { MODKEY|ShiftMask,             XK_r,          self_restart,           {0} }, // removed: Super+Shift+r now reading mode, restart via sysact */
 	#endif // SELFRESTART_PATCH
 	{ MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
 	#if RESTARTSIG_PATCH
