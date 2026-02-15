@@ -13,9 +13,8 @@ The MOD key is set to the Super (Windows) key.
 | Keybinding | Action |
 |------------|--------|
 | `MOD+Return` | Spawn terminal (st) |
-| `MOD+d` | Spawn dmenu |
+| `MOD+d` | App launcher (dlaunch) |
 | `MOD+q` | Kill focused window |
-| `MOD+b` | Toggle bar |
 | `MOD+j/k` | Focus next/previous window |
 | `MOD+h/l` | Decrease/increase master area size |
 | `MOD+Tab` | Switch to last viewed tag |
@@ -28,13 +27,17 @@ The MOD key is set to the Super (Windows) key.
 
 | Keybinding | Action |
 |------------|--------|
-| `MOD+w` | Open browser (librewolf) |
-| `MOD+Shift+w` | Open nmtui (network manager) |
-| `MOD+r` | Open lf (file manager) |
-| `MOD+Shift+r` | Open htop |
-| `MOD+n` | Open nvim |
-| `MOD+Shift+n` | Open newsboat |
-| `MOD+m` | Open ncmpcpp (music player) |
+| `MOD+b` | Browser selector (dbrowse) |
+| `MOD+w` | Content writer (dwrite) |
+| `MOD+r` | Library browser (dread) |
+| `MOD+n` | Notes browser (dnotes) |
+| `MOD+e` | Metadata editor (dedit) |
+| `MOD+c` | Content creator (dcreate) |
+| `MOD+p` | Password manager (passmenu) |
+| `MOD+y` | World clock (dtime) |
+| `MOD+m` | System monitor (btop) |
+| `MOD+Shift+c` | Clipboard manager (dclip) |
+| `MOD+Shift+n` | RSS reader (newsboat) |
 | `MOD+Shift+m` | Toggle mute |
 | `MOD+BackSpace` | System actions menu (sysact) |
 | `MOD+Shift+q` | System actions menu (sysact) |
@@ -51,9 +54,8 @@ The MOD key is set to the Super (Windows) key.
 | Keybinding | Action |
 |------------|--------|
 | `MOD+Shift+j/k` | Move window down/up in stack |
-| `MOD+Shift+Return` | Zoom (swap with master) |
 | `MOD+Shift+Space` | Toggle floating |
-| `MOD+f` | Toggle fullscreen |
+| `MOD+Shift+f` | Toggle fullscreen |
 | `MOD+s` | Toggle sticky |
 | `MOD+o` | Increase number of masters |
 | `MOD+Shift+o` | Decrease number of masters |
@@ -65,15 +67,14 @@ The MOD key is set to the Super (Windows) key.
 | Keybinding | Action |
 |------------|--------|
 | `MOD+t` | Tile layout |
+| `MOD+f` | Floating layout |
+| `MOD+Shift+r` | Reading mode (3 vertical panes) |
 | `MOD+Shift+t` | Bstack layout |
-| `MOD+y` | Spiral layout |
-| `MOD+Shift+y` | Dwindle layout |
 | `MOD+u` | Deck layout |
 | `MOD+Shift+u` | Monocle layout |
 | `MOD+i` | Centered master layout |
 | `MOD+Shift+i` | Centered floating master |
 | `MOD+Ctrl+g` | Gapless grid |
-| `MOD+Ctrl+Shift+t` | Floating layout |
 | `MOD+Space` | Toggle last layout |
 | `MOD+Ctrl+,/.` | Cycle layouts prev/next |
 
@@ -181,9 +182,10 @@ This build uses **dwm-flexipatch** for patch management. Toggle patches in `patc
 
 ### Layouts
 
-- tile, monocle, bstack
+- tile, floating, monocle, bstack
 - centeredmaster, centeredfloatingmaster
 - deck, spiral, dwindle
+- reading mode (3 equal vertical panes)
 
 ---
 

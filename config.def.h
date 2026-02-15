@@ -175,9 +175,9 @@ static void (*bartabmonfns[])(Monitor *) = { NULL /* , customlayoutfn */ };
 #if BAR_PANGO_PATCH
 static const char font[]                 = "monospace 10";
 #else
-static const char *fonts[]               = { "monospace:size=11", "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true" };
+static const char *fonts[]               = { "JetBrainsMono Nerd Font:size=11", "Symbols Nerd Font:pixelsize=16:antialias=true:autohint=true" };
 #endif // BAR_PANGO_PATCH
-static const char dmenufont[]            = "monospace:size=10";
+static const char dmenufont[]            = "JetBrainsMono Nerd Font:size=10";
 
 static char c000000[]                    = "#000000"; // placeholder value
 
@@ -724,6 +724,7 @@ static const Layout layouts[] = {
 	{ "[\\]",     flextile,         { -1, -1, NO_SPLIT, DWINDLE, DWINDLE, 0, NULL } }, // fibonacci dwindle
 	{ "(@)",      flextile,         { -1, -1, NO_SPLIT, SPIRAL, SPIRAL, 0, NULL } }, // fibonacci spiral
 	{ "[T]",      flextile,         { -1, -1, SPLIT_VERTICAL, LEFT_TO_RIGHT, TATAMI, 0, NULL } }, // tatami mats
+	{ "RRR",      flextile,         { 3, -1, SPLIT_VERTICAL, LEFT_TO_RIGHT, TOP_TO_BOTTOM, 0, NULL } }, // reading mode
 	#if TILE_LAYOUT
 	{ "[]=",      tile,             {0} },
 	#endif
@@ -825,7 +826,7 @@ static const char *xkb_layouts[]  = {
 #endif // XKB_PATCH
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #if COMBO_PATCH && SWAPTAGS_PATCH && TAGOTHERMONITOR_PATCH
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      comboview,      {.ui = 1 << TAG} }, \
@@ -1072,15 +1073,19 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Print,      spawn,                  {.v = (const char*[]){ "dmenurecord", "kill", NULL } } },
 
 	/* Applications */
-	{ MODKEY,                       XK_d,          spawn,                  {.v = dmenucmd } },
+	{ MODKEY,                       XK_d,          spawn,                  {.v = (const char*[]){ "dlaunch", NULL } } },
 	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } },
-	{ MODKEY,                       XK_w,          spawn,                  {.v = (const char*[]){ MYBROWSER, NULL } } },
-	{ MODKEY|ShiftMask,             XK_w,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "nmtui", NULL } } },
-	{ MODKEY,                       XK_r,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "lf", NULL } } },
-	{ MODKEY|ShiftMask,             XK_r,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "htop", NULL } } },
-	{ MODKEY,                       XK_n,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "nvim", NULL } } },
+	{ MODKEY,                       XK_b,          spawn,                  {.v = (const char*[]){ "dbrowse", NULL } } },
+	{ MODKEY,                       XK_w,          spawn,                  {.v = (const char*[]){ "dwrite", NULL } } },
+	{ MODKEY,                       XK_r,          spawn,                  {.v = (const char*[]){ "dread", NULL } } },
+	{ MODKEY,                       XK_n,          spawn,                  {.v = (const char*[]){ "dnotes", NULL } } },
+	{ MODKEY,                       XK_e,          spawn,                  {.v = (const char*[]){ "dedit", NULL } } },
+	{ MODKEY,                       XK_c,          spawn,                  {.v = (const char*[]){ "dcreate", NULL } } },
+	{ MODKEY,                       XK_p,          spawn,                  {.v = (const char*[]){ "passmenu", NULL } } },
+	{ MODKEY,                       XK_y,          spawn,                  {.v = (const char*[]){ "dtime", NULL } } },
+	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "btop", NULL } } },
+	{ MODKEY|ShiftMask,             XK_c,          spawn,                  {.v = (const char*[]){ "dclip", NULL } } },
 	{ MODKEY|ShiftMask,             XK_n,          spawn,                  SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
-	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "ncmpcpp", NULL } } },
 	{ MODKEY|ShiftMask,             XK_m,          spawn,                  SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
 
 	/* System */
@@ -1091,14 +1096,14 @@ static const Key keys[] = {
 	#if KEYMODES_PATCH
 	{ MODKEY,                       XK_Escape,     setkeymode,             {.ui = COMMANDMODE} },
 	#endif // KEYMODES_PATCH
-	{ MODKEY,                       XK_p,          spawn,                  {.v = dmenucmd } },
+	/* { MODKEY,                       XK_p,          spawn,                  {.v = dmenucmd } }, // removed: moved to Super+d via dlaunch */
 	{ MODKEY|ShiftMask,             XK_Return,     spawn,                  {.v = termcmd } },
 	#if RIODRAW_PATCH
 	{ MODKEY|ControlMask,           XK_p,          riospawnsync,           {.v = dmenucmd } },
 	{ MODKEY|ControlMask,           XK_Return,     riospawn,               {.v = termcmd } },
 	{ MODKEY,                       XK_s,          rioresize,              {0} },
 	#endif // RIODRAW_PATCH
-	{ MODKEY,                       XK_b,          togglebar,              {0} },
+	/* { MODKEY,                       XK_b,          togglebar,              {0} }, // removed: Super+b now dbrowse */
 	#if TOGGLETOPBAR_PATCH
 	{ MODKEY|ShiftMask,             XK_b,          toggletopbar,           {0} },
 	#endif // TOGGLETOPBAR_PATCH
@@ -1148,7 +1153,7 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_k,          pushup,                 {0} },
 	#endif // PUSH_PATCH / PUSH_NO_MASTER_PATCH
 	{ MODKEY,                       XK_i,          incnmaster,             {.i = +1 } },
-	{ MODKEY,                       XK_d,          incnmaster,             {.i = -1 } },
+	/* { MODKEY,                       XK_d,          incnmaster,             {.i = -1 } }, // removed: Super+d now dlaunch */
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_i,          incnstack,              {.i = +1 } },
 	{ MODKEY|ControlMask,           XK_u,          incnstack,              {.i = -1 } },
@@ -1245,7 +1250,7 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_z,          showhideclient,         {0} },
 	{ MODKEY|ControlMask,           XK_s,          unhideall,              {0} },
 	#endif // BAR_WINTITLEACTIONS_PATCH
-	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} },
+	/* { MODKEY|ShiftMask,             XK_c,          killclient,             {0} }, // removed: Super+Shift+c now dclip, kill via Super+q */
 	#if KILLUNSEL_PATCH
 	{ MODKEY|ShiftMask,             XK_x,          killunsel,              {0} },
 	#endif // KILLUNSEL_PATCH
@@ -1270,9 +1275,9 @@ static const Key keys[] = {
 	#endif // XRDB_PATCH | XRESOURCES_PATCH
 	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // reading mode
 	#if COLUMNS_LAYOUT
-	{ MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} },
+	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} }, // removed: Super+c now dcreate */
 	#endif // COLUMNS_LAYOUT
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_t,          rotatelayoutaxis,       {.i = +1 } },   /* flextile, 1 = layout axis */
@@ -1314,10 +1319,10 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_t,          unfloatvisible,         {.v = &layouts[0]} },
 	#endif // UNFLOATVISIBLE_PATCH
 	#if TOGGLEFULLSCREEN_PATCH
-	{ MODKEY,                       XK_y,          togglefullscreen,       {0} },
+	/* { MODKEY,                       XK_y,          togglefullscreen,       {0} }, // removed: Super+y now dtime */
 	#endif // TOGGLEFULLSCREEN_PATCH
 	#if !FAKEFULLSCREEN_PATCH && FAKEFULLSCREEN_CLIENT_PATCH
-	{ MODKEY|ShiftMask,             XK_y,          togglefakefullscreen,   {0} },
+	/* { MODKEY|ShiftMask,             XK_y,          togglefakefullscreen,   {0} }, // removed: freed */
 	#endif // FAKEFULLSCREEN_CLIENT_PATCH
 	#if FULLSCREEN_PATCH
 	{ MODKEY|ShiftMask,             XK_f,          fullscreen,             {0} },
