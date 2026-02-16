@@ -53,39 +53,194 @@ cd ~/.local/src/dwm && git pull && sudo make clean install
 
 ---
 
-## Code Style (Suckless C Conventions)
+## Suckless Coding Style
 
-### Formatting
-- **Indentation:** Tabs (width 8). Never spaces for indentation.
-- **Brace style:** K&R — opening brace on same line, closing at column 0.
-- **Line length:** ~80 characters preferred, not strictly enforced.
-- **No trailing whitespace.**
+Reference: https://suckless.org/coding_style/
 
-### Naming
+The following are guidelines. The most important aspect of style is **consistency**.
+
+Recommended reading:
+- https://man.openbsd.org/style
+- http://doc.cat-v.org/bell_labs/pikestyle
+- https://www.kernel.org/doc/Documentation/process/coding-style.rst
+
+### File Layout
+
+Organize files in this order:
+
+1. Comment with LICENSE and file/tool explanation
+2. Headers
+3. Macros
+4. Types
+5. Function declarations (include variable names; group logically)
+6. Global variables
+7. Function definitions matching declaration order
+8. `main`
+
+### C Features
+
+- Use **C99 without extensions** (ISO/IEC 9899:1999).
+- Use **POSIX.1-2008**: define `_POSIX_C_SOURCE 200809L` or `_XOPEN_SOURCE 700`.
+- **Do not mix declarations and code.**
+- **Do not use for loop initial declarations** (e.g., `for (int i = 0; ...)`).
+- Use `/* */` for comments, **not `//`**.
+- Variadic macros are acceptable but be cautious with `__VA_ARGS__`.
+
+### Blocks
+
+- All variable declarations at the **top of the block**.
+- `{` on the same line, preceded by a single space (except for function definitions).
+- `}` on its own line unless continuing a statement (`} else {`).
+
+Use blocks for single statements only when the inner statement needs blocks:
+```c
+for (;;) {
+	if (foo) {
+		bar;
+		baz;
+	}
+}
+```
+
+Use blocks when any branch requires them:
+```c
+if (foo) {
+	bar;
+} else {
+	baz;
+	qux;
+}
+```
+
+### Leading Whitespace
+
+- Use **tabs for indentation** and **spaces for alignment**.
+- No tabs except at the beginning of a line.
+- Use **spaces** (not tabs) for multiline macros, as the indentation level is 0.
+
+### Functions
+
+- Return type and modifiers on a **separate line**.
+- Function name and argument list on the next line.
+- Opening `{` on its **own line** (function definitions only).
+- Functions not used outside the translation unit must be `static`.
+
+```c
+static void
+usage(void)
+{
+	eprintf("usage: %s [file ...]\n", argv0);
+}
+```
+
+### Variables
+
+- Global variables not used outside the translation unit must be `static`.
+- In pointer declarations, `*` is adjacent to the **variable name**, not the type:
+  ```c
+  char *p;    /* correct */
+  char* p;    /* wrong */
+  ```
+
+### Keywords
+
+- Use a **space after** `if`, `for`, `while`, `switch` (they are not function calls).
+- **No space** after `(` or before `)`.
+- Preferably use `()` with `sizeof`.
+- **No space** with `sizeof()`:
+  ```c
+  sizeof(int)   /* correct */
+  sizeof (int)  /* wrong */
+  ```
+
+### Switch Statements
+
+- **Do not indent cases** another level.
+- **Comment cases that fall through.**
+
+```c
+switch (value) {
+case 0: /* FALLTHROUGH */
+case 1:
+case 2:
+	break;
+default:
+	break;
+}
+```
+
+### Headers
+
+- Place **system/libc headers first**, in alphabetical order.
+- Add comments if a specific inclusion order is required.
+- Place **local headers after an empty line**.
+- Avoid cyclic dependencies; include headers only where needed.
+
+### User Defined Types
+
+- **Do not use `type_t` naming** (reserved for POSIX, less readable).
+- Typedef opaque structs.
+- **Do not typedef builtin types.**
+- Use **`CamelCase`** for typedef'd types.
+
+### Line Length
+
+Keep lines to a reasonable length: **max 79 characters**.
+
+### Tests and Boolean Values
+
+- **Do not use C99 `bool`** types. Stick to integer types.
+- Use compound assignment and tests unless lines grow too long:
+  ```c
+  if (!(p = malloc(sizeof(*p))))
+  	hcf();
+  ```
+
+### Error Handling
+
+- When functions return `-1` for error, **test against `0`**, not `-1`:
+  ```c
+  if (func() < 0)
+  	hcf();
+  ```
+- Use `goto` to unwind and cleanup when necessary, instead of multiple nested levels.
+- `return` or `exit` early on failures instead of deeply nesting.
+- Unreachable code should have a `/* NOTREACHED */` comment.
+- For fatal errors in one-shot programs, memory freeing may be skipped, but temporary files should be cleaned.
+
+### Enums and #define
+
+Use enums for semantically grouped values. Use `#define` otherwise:
+```c
+#define MAXSZ  4096
+#define MAGIC1 0xdeadbeef
+
+enum {
+	DIRECTION_X,
+	DIRECTION_Y,
+	DIRECTION_Z
+};
+```
+
+---
+
+## DWM-Specific Conventions
+
+### Naming in dwm
+
 - `CamelCase` for types and structs: `Client`, `Monitor`, `Layout`, `Key`, `Button`
 - `lowercase` or `lowercasemultiword` for functions: `focusmon`, `tagmon`, `sendmon`, `killclient`
 - `UPPERCASE` for macros and constants: `MODKEY`, `NUMTAGS`, `CLEANMASK`, `SHCMD`
 - Enum values: `SchemeNorm`, `SchemeSel`, `NetSupported`
 
-### Functions
-```c
-static void
-functionname(const Arg *arg)
-{
-	/* body indented with tabs */
-}
-```
-- Return type on its own line.
-- Function name on the next line.
-- Opening brace on its own line (for function definitions only — NOT for if/for/while).
-- Minimize variable declarations; declare at top of scope.
+### Comments in Config Files
 
-### Comments
-- `/* C89-style block comments */` preferred in source.
-- `// C99 inline comments` acceptable in config files for brief annotations.
+- `/* C89-style block comments */` in `.c` source files (mandatory per suckless style).
+- `// C99 inline comments` are acceptable in `config.def.h` for brief binding annotations only.
 - Preprocessor guards: `#endif // PATCH_NAME`
 
 ### Conditional Compilation (Patch Guards)
+
 ```c
 #if SOME_PATCH
 /* patch-specific code */
@@ -94,8 +249,9 @@ functionname(const Arg *arg)
 - Always include the patch name in the `#endif` comment.
 - Custom (non-patch) code added to `config.def.h` does NOT need guards.
 
-### Example: Adding a Custom Function in config.def.h
-Custom functions go **before** the `static const Key keys[]` array. They can reference any forward-declared function from `dwm.c` (`sendmon`, `focusmon`, `arrange`, `focus`, `selmon`, `mons`, etc.) because `config.h` is included after all declarations in `dwm.c`.
+### Adding a Custom Function in config.def.h
+
+Custom functions go **before** the `static const Key keys[]` array. They can reference any forward-declared function from `dwm.c` (`sendmon`, `focusmon`, `arrange`, `focus`, `selmon`, `mons`, etc.) because `config.h` is included after all declarations in `dwm.c` (line 878).
 
 ---
 
