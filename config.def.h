@@ -1055,6 +1055,53 @@ ResourcePref resources[] = {
 };
 #endif // XRESOURCES_PATCH
 
+/* Send focused window to the monitor in the given direction (0=left, 1=right, 2=up, 3=down).
+ * Does nothing if no monitor exists in that direction. */
+static void
+tagmondir(const Arg *arg)
+{
+	Client *c = selmon->sel;
+	Monitor *m, *best = NULL;
+	int dist, bestdist = 99999;
+
+	if (!c || !mons->next)
+		return;
+
+	for (m = mons; m; m = m->next) {
+		if (m == selmon)
+			continue;
+		switch (arg->i) {
+		case 0: /* left */
+			if (m->mx + m->mw <= selmon->mx) {
+				dist = selmon->mx - m->mx;
+				if (dist < bestdist) { bestdist = dist; best = m; }
+			}
+			break;
+		case 1: /* right */
+			if (m->mx >= selmon->mx + selmon->mw) {
+				dist = m->mx - selmon->mx;
+				if (dist < bestdist) { bestdist = dist; best = m; }
+			}
+			break;
+		case 2: /* up */
+			if (m->my + m->mh <= selmon->my) {
+				dist = selmon->my - m->my;
+				if (dist < bestdist) { bestdist = dist; best = m; }
+			}
+			break;
+		case 3: /* down */
+			if (m->my >= selmon->my + selmon->mh) {
+				dist = m->my - selmon->my;
+				if (dist < bestdist) { bestdist = dist; best = m; }
+			}
+			break;
+		}
+	}
+
+	if (best)
+		sendmon(c, best);
+}
+
 static const Key keys[] = {
 	/* modifier                     key            function                argument */
 
@@ -1090,8 +1137,8 @@ static const Key keys[] = {
 
 	/* System */
 	{ MODKEY,                       XK_BackSpace,  spawn,                  {.v = (const char*[]){ "sysact", NULL } } },
-	{ MODKEY|ShiftMask,             XK_q,          spawn,                  {.v = (const char*[]){ "sysact", NULL } } },
-	{ MODKEY,                       XK_q,          killclient,             {0} },
+	{ MODKEY|ShiftMask,             XK_q,          killclient,             {0} }, // close window
+	{ MODKEY,                       XK_q,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
 
 	#if KEYMODES_PATCH
 	{ MODKEY,                       XK_Escape,     setkeymode,             {.ui = COMMANDMODE} },
@@ -1275,7 +1322,7 @@ static const Key keys[] = {
 	#endif // XRDB_PATCH | XRESOURCES_PATCH
 	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
-	{ MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // reading mode
+	/* { MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // removed: reading mode moved to Super+q */
 	#if COLUMNS_LAYOUT
 	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} }, // removed: Super+c now dcreate */
 	#endif // COLUMNS_LAYOUT
@@ -1343,8 +1390,12 @@ static const Key keys[] = {
 	#endif // SCRATCHPAD_ALT_1_PATCH
 	{ MODKEY,                       XK_comma,      focusmon,               {.i = -1 } },
 	{ MODKEY,                       XK_period,     focusmon,               {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,      tagmon,                 {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period,     tagmon,                 {.i = +1 } },
+	/* { MODKEY|ShiftMask,             XK_comma,      tagmon,                 {.i = -1 } }, // removed: send window via Super+Arrow instead */
+	/* { MODKEY|ShiftMask,             XK_period,     tagmon,                 {.i = +1 } }, // removed: send window via Super+Arrow instead */
+	{ MODKEY,                       XK_Left,       tagmondir,              {.i = 0 } }, // send window to left monitor
+	{ MODKEY,                       XK_Right,      tagmondir,              {.i = 1 } }, // send window to right monitor
+	{ MODKEY,                       XK_Up,         tagmondir,              {.i = 2 } }, // send window to upper monitor
+	{ MODKEY,                       XK_Down,       tagmondir,              {.i = 3 } }, // send window to lower monitor
 	#if FOCUSADJACENTTAG_PATCH
 	{ MODKEY,                       XK_Left,       viewtoleft,             {0} }, // note keybinding conflict with focusdir
 	{ MODKEY,                       XK_Right,      viewtoright,            {0} }, // note keybinding conflict with focusdir
