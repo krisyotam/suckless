@@ -1,119 +1,110 @@
-Similar to [dwm-flexipatch](https://github.com/bakkeby/dwm-flexipatch) this slock 1.6 (3791a99,
-2025-08-16) project has a different take on patching. It uses preprocessor directives to decide
-whether or not to include a patch during build time. Essentially this means that this build, for
-better or worse, contains both the patched _and_ the original code. The aim being that you can
-select which patches to include and the build will contain that code and nothing more.
+# Kris's build of slock (flexipatch)
 
-For example to include the `capscolor` patch then you would only need to flip this setting from 0
-to 1 in [patches.h](https://github.com/bakkeby/slock-flexipatch/blob/master/patches.h):
-```c
-#define CAPSCOLOR_PATCH 1
-```
+My build of [slock](https://tools.suckless.org/slock/), the simple X display locker.
 
-Once you have found out what works for you and what doesn't then you should be in a better position
-to choose patches should you want to start patching from scratch.
-
-Alternatively if you have found the patches you want, but don't want the rest of the flexipatch
-entanglement on your plate then you may want to have a look at
-[flexipatch-finalizer](https://github.com/bakkeby/flexipatch-finalizer); a custom pre-processor
-tool that removes all the unused flexipatch code leaving you with a build that contains the patches
-you selected.
-
-Refer to [https://tools.suckless.org/slock/](https://tools.suckless.org/slock/) for details on the
-slock tool, how to install it and how it works.
+This build is based on [slock-flexipatch](https://github.com/bakkeby/slock-flexipatch), which uses preprocessor directives to manage patches. This allows easy toggling of features without manual patching.
 
 ---
 
-### Changelog:
+## How Patches Work (Preprocessor Directives)
 
-2025-11-15 - Added the visual unlock patch
+Unlike traditional slock patching, this build uses C preprocessor directives to include/exclude patches at compile time. To enable or disable a patch, edit `patches.h` and set the value to `1` (enabled) or `0` (disabled):
 
-2022-03-28 - Added the background image patch
+```c
+#define DPMS_PATCH 1       /* enabled */
+#define DWM_LOGO_PATCH 0   /* disabled */
+```
 
-2021-09-13 - Added the dwm logo patch
+Then rebuild:
+```bash
+sudo make clean install
+```
 
-2021-09-09 - Added the auto-timeout, failure-command and secret-password patches
+All patch options are documented in `patches.h`.
 
-2021-06-08 - Added the color message patch
+---
 
-2020-08-03 - Added alpha, keypress_feedback and blur_pixelated_screen patches
+## Available Patches
 
-2019-11-27 - Added xresources patch
+This is currently a **vanilla build** with no patches enabled. The following patches are available to toggle on in `patches.h`:
 
-2019-10-17 - Added capscolor, control clear, dpms, mediakeys, message, pam auth, quickcancel patches
+| Patch | Description |
+|-------|-------------|
+| alpha | Transparency support (pair with a compositor for blur) |
+| auto_timeout | Run a command after a specified period of inactivity |
+| background_image | Custom background image on lock screen (requires Imlib2) |
+| blur_pixelated_screen | Blur/pixelate a screenshot as the lock background (requires Imlib2) |
+| capscolor | Additional color to indicate Caps Lock state |
+| color_message | Lock screen message with 24-bit ANSI color codes (requires Xinerama) |
+| controlclear | Suppress failure color on control key presses with empty buffer |
+| dpms | Auto shut off monitor after configurable inactivity |
+| dwm_logo | Draw the dwm logo, color changes with state |
+| failure_command | Run a command after N incorrect password attempts |
+| keypress_feedback | Random blocks on screen as keypress feedback |
+| mediakeys | Allow media keys (volume, skip) while locked |
+| message | Display a text message on the lock screen (requires Xinerama) |
+| pamauth | PAM authentication instead of shadow (default config for Arch) |
+| quickcancel | Cancel lock by moving mouse within a time window |
+| secret_password | Execute commands on special password entry |
+| terminalkeys | Terminal-style key bindings (Ctrl+U, etc.) for password input |
+| unlockscreen | Keep screen visible but lock input |
+| visual_unlock | `-u` flag to lock input without showing lock screen |
+| xresources | Read colors from Xresources |
 
-2019-10-16 - Introduced [flexipatch-finalizer](https://github.com/bakkeby/flexipatch-finalizer)
+---
 
-### Patches included:
+## Installation
 
-   - [alpha](https://github.com/khuedoan/slock)
-      - enables transparency for slock
-      - intended to be combined with a compositor that can blur the transparent background
+```bash
+git clone https://github.com/krisyotam/slock
+cd slock
+sudo make clean install
+```
 
-   - [auto-timeout](https://tools.suckless.org/slock/patches/auto-timeout/)
-      - allows for a command to be executed after a specified time of inactivity
+---
 
-   - [background_image](https://tools.suckless.org/slock/patches/background-image/)
-      - sets the lockscreen picture to a background image
+## Configuration
 
-   - [blur_pixelated_screen](https://tools.suckless.org/slock/patches/blur-pixelated-screen/)
-      - sets the lockscreen picture to a blured or pixelated screenshot
+### Enabling/Disabling Patches
 
-   - [capscolor](https://tools.suckless.org/slock/patches/capscolor/)
-      - adds an additional color to indicate the state of Caps Lock
+Edit `patches.h` to toggle patches:
 
-   - [color-message](https://tools.suckless.org/slock/patches/colormessage/)
-      - based on the message patch this patch lets you add a message to your lock screen using
-        24-bit color ANSI escape codes
+```c
+#define CAPSCOLOR_PATCH 1    /* Enable caps lock color */
+#define DPMS_PATCH 1         /* Enable monitor power management */
+```
 
-   - [control-clear](https://tools.suckless.org/slock/patches/control-clear/)
-      - with this patch slock will no longer change to the failure color if a control key is pressed
-        while the buffer is empty
-      - this may be useful if, for example, you wake your monitor up by pressing a control key and
-        don't want to spoil the detection of failed unlocking attempts
+### Customizing Settings
 
-   - [dpms](https://tools.suckless.org/slock/patches/dpms/)
-      - interacts with the Display Power Signaling and automatically shuts down the monitor after a
-        configurable amount of seconds
-      - the monitor will automatically be activated by pressing a key or moving the mouse and the
-        password can be entered then
+Edit `config.def.h` for:
+- Lock screen colors
+- User/group settings
+- Patch-specific options (timeouts, messages, etc.)
 
-   - [dwmlogo](https://tools.suckless.org/slock/patches/dwmlogo/)
-      - draws the dwm logo which changes color based on the state
+After editing, rebuild:
+```bash
+rm config.h && sudo make clean install
+```
 
-   - [failure-command](https://tools.suckless.org/slock/patches/failure-command/)
-      - allows for a command to be run after a specified number of incorrect attempts
+---
 
-   - [keypress_feedback](https://tools.suckless.org/slock/patches/keypress-feedback/)
-      - draws random blocks on the screen to display keypress feedback
+## My Other Suckless Repos
 
-   - [mediakeys](https://tools.suckless.org/slock/patches/mediakeys/)
-      - allows media keys to be used while the screen is locked, e.g. adjust volume or skip to the
-        next song without having to unlock the screen first
+- [dwm](https://github.com/krisyotam/dwm) - dynamic window manager
+- [st](https://github.com/krisyotam/st) - simple terminal
+- [dmenu](https://github.com/krisyotam/dmenu) - application launcher
+- [dwmblocks](https://github.com/krisyotam/dwmblocks) - modular status bar
 
-   - [message](https://tools.suckless.org/slock/patches/message/)
-      - this patch lets you add a custom message to your lock screen
+---
 
-   - [pam-auth](https://tools.suckless.org/slock/patches/pam_auth/)
-      - replaces shadow support with PAM authentication support
+## Credits
 
-   - [quickcancel](https://tools.suckless.org/slock/patches/quickcancel/)
-      - cancel slock by moving the mouse within a certain time-period after slock started
-      - the time-period can be defined in seconds with the setting timetocancel in the config.h
-      - this can be useful if you forgot to disable xautolock during an activity that requires no
-        input (e.g. reading text, watching video, etc.)
+- Based on [slock-flexipatch](https://github.com/bakkeby/slock-flexipatch) by bakkeby
+- [suckless.org](https://tools.suckless.org/slock/) for the original slock
 
-   - [secret-password](https://tools.suckless.org/slock/patches/secret-password/)
-      - allows for commands to be executed when the user enters special passwords
+---
 
-   - [terminalkeys](https://tools.suckless.org/slock/patches/terminalkeys/)
-      - adds key commands that are commonly used in terminal applications (in particular the login
-        prompt)
+## Contact
 
-   - [unlockscreen](https://tools.suckless.org/slock/patches/unlock_screen/)
-      - this patch keeps the screen unlocked, but keeps the input locked
-      - that is, the screen is not affected by slock, but users will not be able to interact with
-        the X session unless they enter the correct password
-
-   - [xresources](https://tools.suckless.org/slock/patches/xresources/)
-      - this patch adds the ability to get colors via Xresources
+- Kris Yotam <krisyotam@protonmail.com>
+- [https://krisyotam.com](https://krisyotam.com)
