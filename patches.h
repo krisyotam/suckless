@@ -1118,7 +1118,7 @@
 /* Allows restarting dwm without the dependency of an external script.
  * https://dwm.suckless.org/patches/selfrestart/
  */
-#define SELFRESTART_PATCH 0
+#define SELFRESTART_PATCH 1
 
 /* Floating windows being sent to another monitor will be centered.
  * https://dwm.suckless.org/patches/sendmoncenter/
@@ -1526,7 +1526,7 @@
  * columns (i.e. left to right).
  * https://dwm.suckless.org/patches/columns/
  */
-#define COLUMNS_LAYOUT 0
+#define COLUMNS_LAYOUT 1
 
 /* Deck layout.
  * https://dwm.suckless.org/patches/deck/
@@ -1567,7 +1567,7 @@
 /* Grid layout where nmaster controls the number of rows.
  * https://dwm.suckless.org/patches/nrowgrid/
  */
-#define NROWGRID_LAYOUT 0
+#define NROWGRID_LAYOUT 1
 
 /* The default tile layout.
  * This can be optionally disabled in favour of other layouts.

@@ -1114,10 +1114,10 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_MonBrightnessDown,spawn,        {.v = (const char*[]){ "light", "-U", "5", NULL } } },
 
 	/* Screenshots */
-	{ 0,                            XK_Print,      spawn,                  SHCMD("maim pic-full-$(date '+%y%m%d-%H%M-%S').png") },
-	{ ShiftMask,                    XK_Print,      spawn,                  {.v = (const char*[]){ "maimpick", NULL } } },
-	{ MODKEY,                       XK_Print,      spawn,                  {.v = (const char*[]){ "dmenurecord", NULL } } },
-	{ MODKEY|ShiftMask,             XK_Print,      spawn,                  {.v = (const char*[]){ "dmenurecord", "kill", NULL } } },
+	{ 0,                            XK_Print,      spawn,                  {.v = (const char*[]){ "screenshot", NULL } } },
+	{ ShiftMask,                    XK_Print,      spawn,                  {.v = (const char*[]){ "screenshot", "select", NULL } } },
+	{ MODKEY,                       XK_Print,      spawn,                  {.v = (const char*[]){ "record", NULL } } },
+	{ MODKEY|ShiftMask,             XK_Print,      spawn,                  {.v = (const char*[]){ "record", "-stop", NULL } } },
 
 	/* Applications */
 	{ MODKEY,                       XK_d,          spawn,                  {.v = (const char*[]){ "dlaunch", NULL } } },
@@ -1130,15 +1130,17 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_c,          spawn,                  {.v = (const char*[]){ "dcreate", NULL } } },
 	{ MODKEY,                       XK_p,          spawn,                  {.v = (const char*[]){ "passmenu", NULL } } },
 	{ MODKEY,                       XK_y,          spawn,                  {.v = (const char*[]){ "dtime", NULL } } },
-	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ MYTERM, "-e", "btop", NULL } } },
+	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ "dmode", NULL } } },
+	{ MODKEY,                       XK_a,          spawn,                  {.v = (const char*[]){ "questions", NULL } } },
 	{ MODKEY|ShiftMask,             XK_c,          spawn,                  {.v = (const char*[]){ "dclip", NULL } } },
 	{ MODKEY|ShiftMask,             XK_n,          spawn,                  SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
 	{ MODKEY|ShiftMask,             XK_m,          spawn,                  SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
+	/* { MODKEY|ShiftMask,             XK_e,          spawn,                  {.v = (const char*[]){ "dmode", NULL } } }, // removed: moved to Mod+m */
 
 	/* System */
 	{ MODKEY,                       XK_BackSpace,  spawn,                  {.v = (const char*[]){ "sysact", NULL } } },
-	{ MODKEY|ShiftMask,             XK_q,          killclient,             {0} }, // close window
-	{ MODKEY,                       XK_q,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
+	{ MODKEY|ShiftMask,             XK_q,          spawn,                  {.v = (const char*[]){ "sysact", NULL } } },
+	{ MODKEY,                       XK_q,          killclient,             {0} },
 
 	#if KEYMODES_PATCH
 	{ MODKEY,                       XK_Escape,     setkeymode,             {.ui = COMMANDMODE} },
@@ -1304,7 +1306,7 @@ static const Key keys[] = {
 	#if SELFRESTART_PATCH
 	/* { MODKEY|ShiftMask,             XK_r,          self_restart,           {0} }, // removed: Super+Shift+r now reading mode, restart via sysact */
 	#endif // SELFRESTART_PATCH
-	{ MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
+	/* { MODKEY|ShiftMask,             XK_q,          quit,                   {0} }, // removed: conflicts with sysact, quit via sysact menu */
 	#if RESTARTSIG_PATCH
 	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {1} },
 	#endif // RESTARTSIG_PATCH
@@ -1322,7 +1324,7 @@ static const Key keys[] = {
 	#endif // XRDB_PATCH | XRESOURCES_PATCH
 	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
-	/* { MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // removed: reading mode moved to Super+q */
+	{ MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
 	#if COLUMNS_LAYOUT
 	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} }, // removed: Super+c now dcreate */
 	#endif // COLUMNS_LAYOUT
