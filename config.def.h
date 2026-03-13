@@ -724,7 +724,7 @@ static const Layout layouts[] = {
 	{ "[\\]",     flextile,         { -1, -1, NO_SPLIT, DWINDLE, DWINDLE, 0, NULL } }, // fibonacci dwindle
 	{ "(@)",      flextile,         { -1, -1, NO_SPLIT, SPIRAL, SPIRAL, 0, NULL } }, // fibonacci spiral
 	{ "[T]",      flextile,         { -1, -1, SPLIT_VERTICAL, LEFT_TO_RIGHT, TATAMI, 0, NULL } }, // tatami mats
-	{ "RRR",      flextile,         { 3, -1, SPLIT_VERTICAL, LEFT_TO_RIGHT, TOP_TO_BOTTOM, 0, NULL } }, // reading mode
+	{ "RRR",      flextile,         { -1, -1, NO_SPLIT, LEFT_TO_RIGHT, LEFT_TO_RIGHT, 0, NULL } }, // reading mode (equal-width columns)
 	#if TILE_LAYOUT
 	{ "[]=",      tile,             {0} },
 	#endif
@@ -1118,8 +1118,10 @@ static const Key keys[] = {
 	{ ShiftMask,                    XK_Print,      spawn,                  {.v = (const char*[]){ "screenshot", "select", NULL } } },
 	{ MODKEY,                       XK_Print,      spawn,                  {.v = (const char*[]){ "record", NULL } } },
 	{ MODKEY|ShiftMask,             XK_Print,      spawn,                  {.v = (const char*[]){ "record", "-stop", NULL } } },
+	{ MODKEY|ShiftMask,             XK_s,          spawn,                  {.v = (const char*[]){ "screenshot", "select", NULL } } },
 
 	/* Applications */
+	{ MODKEY,                       XK_slash,      spawn,                  {.v = (const char*[]){ "dkymap", NULL } } },
 	{ MODKEY,                       XK_d,          spawn,                  {.v = (const char*[]){ "dlaunch", NULL } } },
 	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } },
 	{ MODKEY,                       XK_b,          spawn,                  {.v = (const char*[]){ "dbrowse", NULL } } },
@@ -1201,7 +1203,8 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_j,          pushdown,               {0} },
 	{ MODKEY|ControlMask,           XK_k,          pushup,                 {0} },
 	#endif // PUSH_PATCH / PUSH_NO_MASTER_PATCH
-	{ MODKEY,                       XK_i,          incnmaster,             {.i = +1 } },
+	/* { MODKEY,                       XK_i,          incnmaster,             {.i = +1 } }, // removed: Super+i now reading mode */
+	{ MODKEY,                       XK_i,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
 	/* { MODKEY,                       XK_d,          incnmaster,             {.i = -1 } }, // removed: Super+d now dlaunch */
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_i,          incnstack,              {.i = +1 } },
@@ -1377,7 +1380,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_f,          fullscreen,             {0} },
 	#endif // FULLSCREEN_PATCH
 	#if STICKY_PATCH
-	{ MODKEY|ShiftMask,             XK_s,          togglesticky,           {0} },
+	/* { MODKEY|ShiftMask,             XK_s,          togglesticky,           {0} }, // removed: replaced with screenshot select */
 	#endif // STICKY_PATCH
 	#if SCRATCHPAD_ALT_1_PATCH
 	{ MODKEY,                       XK_minus,      scratchpad_show,        {0} },
