@@ -2,7 +2,6 @@
  * This file contains patch control flags.
  *
  * Kris Yotam's dmenu build - patches enabled:
- * - alpha (transparency)
  * - border (visible border when centered)
  * - caseinsensitive (case-insensitive by default)
  * - center (centered on screen)
@@ -20,7 +19,7 @@
 /* Patches */
 
 /* The alpha patch adds transparency for the dmenu window. */
-#define ALPHA_PATCH 1
+#define ALPHA_PATCH 0
 
 /* Adds padding for dmenu similar to dwm barpadding. */
 #define BARPADDING_PATCH 0
