@@ -25,7 +25,7 @@
     X("", "cat /tmp/recordingicon 2>/dev/null", 0, 9) \
     X("", "sb-torrent", 20, 7)                       \
     X("", "sb-news", 0, 6)                           \
-    X("", "sb-mailbox", 180, 12)                     \
+    X("", "sb-systemstats", 10, 12)                   \
     X("", "sb-pacpackages", 0, 8)                    \
     X("", "sb-disk", 60, 21)                         \
     X("", "sb-nettraf", 1, 16)                       \
