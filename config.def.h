@@ -1133,6 +1133,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_y,          spawn,                  {.v = (const char*[]){ "dtime", NULL } } },
 	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ "dmode", NULL } } },
 	{ MODKEY,                       XK_a,          spawn,                  {.v = (const char*[]){ "questions", NULL } } },
+	{ MODKEY,                       XK_z,          spawn,                  {.v = (const char*[]){ "dsnip", NULL } } },
 	{ MODKEY|ShiftMask,             XK_c,          spawn,                  {.v = (const char*[]){ "dclip", NULL } } },
 	{ MODKEY|ShiftMask,             XK_n,          spawn,                  SHCMD("st -e newsboat; pkill -RTMIN+6 dwmblocks") },
 	{ MODKEY|ShiftMask,             XK_m,          spawn,                  SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
