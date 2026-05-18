@@ -546,6 +546,11 @@ static const Rule rules[] = {
 	RULE(.instance = "spterm", .tags = SPTAG(0), .isfloating = 1, .isterminal = 1)
 	RULE(.instance = "spcalc", .tags = SPTAG(1), .isfloating = 1, .isterminal = 1)
 	#endif // SCRATCHPADS_PATCH
+	/* Plan 9 widgets: float top-right of primary monitor, mirroring conky on the left */
+	#if FLOATPOS_PATCH
+	RULE(.class = "faces", .isfloating = 1, .floatpos = "2123X 55Y 380W 80H", .monitor = 0)
+	RULE(.class = "stats", .isfloating = 1, .floatpos = "2123X 145Y 380W 300H", .monitor = 0)
+	#endif // FLOATPOS_PATCH
 };
 
 #if MONITOR_RULES_PATCH
