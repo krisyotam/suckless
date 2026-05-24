@@ -183,13 +183,13 @@ static char c000000[]                    = "#000000"; // placeholder value
 
 static char normfgcolor[]                = "#dae4ee";
 static char normbgcolor[]                = "#1f2933";
-static char normbordercolor[]            = "#1f2933";
+static char normbordercolor[]            = "#9eeeee"; /* plan 9 pale cyan (was #1f2933) */
 static char normfloatcolor[]             = "#9FBCD9";
 
 static char selfgcolor[]                 = "#1f2933";
 static char selbgcolor[]                 = "#DEC292";
-static char selbordercolor[]             = "#DEC292";
-static char selfloatcolor[]              = "#DEC292";
+static char selbordercolor[]             = "#008888"; /* plan 9 bluegreen focused (was #DEC292) */
+static char selfloatcolor[]              = "#008888"; /* plan 9 bluegreen (was #DEC292) */
 
 static char titlenormfgcolor[]           = "#989fa6";
 static char titlenormbgcolor[]           = "#1f2933";
@@ -538,6 +538,7 @@ static const Rule rules[] = {
 	RULE(.class = "St", .isterminal = 1)
 	RULE(.title = "Event Tester", .noswallow = 1)
 	RULE(.instance = "floatterm", .class = "St", .isfloating = 1, .isterminal = 1)
+	RULE(.instance = "fzfmenu", .class = "St", .isfloating = 1, .isterminal = 1)
 	RULE(.instance = "bg", .class = "St", .tags = 1 << 7, .isterminal = 1)
 	#endif // SWALLOW_PATCH
 	#if RENAMED_SCRATCHPADS_PATCH
@@ -1129,11 +1130,11 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,          spawn,                  {.v = (const char*[]){ "dlaunch", NULL } } },
 	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } },
 	{ MODKEY,                       XK_b,          spawn,                  {.v = (const char*[]){ "dbrowse", NULL } } },
-	{ MODKEY,                       XK_w,          spawn,                  {.v = (const char*[]){ "dwrite", NULL } } },
+	{ MODKEY,                       XK_w,          spawn,                  {.v = (const char*[]){ "tome", "-dmenu", "-edit", NULL } } },
 	{ MODKEY,                       XK_r,          spawn,                  {.v = (const char*[]){ "dread", NULL } } },
 	{ MODKEY,                       XK_n,          spawn,                  {.v = (const char*[]){ "dnotes", NULL } } },
-	{ MODKEY,                       XK_e,          spawn,                  {.v = (const char*[]){ "dedit", NULL } } },
-	{ MODKEY,                       XK_c,          spawn,                  {.v = (const char*[]){ "dcreate", NULL } } },
+	{ MODKEY,                       XK_e,          spawn,                  {.v = (const char*[]){ "tome", "-dmenu", "-data", NULL } } },
+	{ MODKEY,                       XK_c,          spawn,                  {.v = (const char*[]){ "tome", "-dmenu", "-create", NULL } } },
 	{ MODKEY,                       XK_p,          spawn,                  {.v = (const char*[]){ "passmenu", NULL } } },
 	{ MODKEY,                       XK_y,          spawn,                  {.v = (const char*[]){ "dtime", NULL } } },
 	{ MODKEY,                       XK_m,          spawn,                  {.v = (const char*[]){ "dmode", NULL } } },
@@ -1334,7 +1335,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
 	{ MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
 	#if COLUMNS_LAYOUT
-	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} }, // removed: Super+c now dcreate */
+	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} }, // removed: Super+c now tome -dmenu -create */
 	#endif // COLUMNS_LAYOUT
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_t,          rotatelayoutaxis,       {.i = +1 } },   /* flextile, 1 = layout axis */
