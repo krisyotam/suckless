@@ -28,7 +28,7 @@ static const int pseudotransparency = 0;
  *             0 = no border, 100 = border width is same as cell width */
 int borderperc = 20;
 #else
-static int borderpx = 0;
+static int borderpx = 4; /* plan 9 internal padding (was 0) */
 #endif // RELATIVEBORDER_PATCH
 
 #if OPENURLONCLICK_PATCH
@@ -185,33 +185,41 @@ char *xdndescchar = " !\"#$&'()*;<>?[\\]^`{|}~";
 
 /* Terminal colors - Gruvbox Dark */
 static const char *colorname[] = {
-	/* 8 normal colors */
-	"#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
-	"#cc241d",
-	"#98971a",
-	"#d79921",
-	"#458588",
-	"#b16286",
-	"#689d6a",
-	"#a89984",
+	/* 8 normal colors -- Plan 9 palette (light bg safe) */
+	"#000000", /* 0: black */
+	"#aa0000", /* 1: red (rio B2 select) */
+	"#006600", /* 2: green (rio B3 select) */
+	"#99994c", /* 3: yellow/olive (acme border) */
+	"#005dbb", /* 4: blue (greyblue) */
+	"#8888cc", /* 5: magenta (purpleblue) */
+	"#008888", /* 6: cyan (bluegreen) */
+	"#888888", /* 7: white (dim grey for light bg) */
 
 	/* 8 bright colors */
-	"#928374",
-	"#fb4934",
-	"#b8bb26",
-	"#fabd2f",
-	"#83a598",
-	"#d3869b",
-	"#8ec07c",
-	"#ebdbb2",
+	"#555555", /* 8: bright black */
+	"#cc0000", /* 9: bright red */
+	"#00aa00", /* 10: bright green */
+	"#eeee9e", /* 11: bright yellow (darkyellow) */
+	"#4993dd", /* 12: bright blue (palegreyblue) */
+	"#b16286", /* 13: bright magenta */
+	"#55aaaa", /* 14: bright cyan (greygreen) */
+	"#000000", /* 15: bright white (black on light bg) */
 
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#add8e6", /* 256 -> cursor */
-	"#555555", /* 257 -> rev cursor*/
-	"#282828", /* 258 -> bg */
-	"#ffffff", /* 259 -> fg */
+	"#000000", /* 256 -> cursor (black block on white) */
+	"#ffffff", /* 257 -> rev cursor */
+	"#ffffff", /* 258 -> bg (plan 9 white) */
+	"#000000", /* 259 -> fg (black text) */
+
+	/* ROLLBACK (gruvbox-dark):
+	 * 0:#282828  1:#cc241d  2:#98971a  3:#d79921
+	 * 4:#458588  5:#b16286  6:#689d6a  7:#a89984
+	 * 8:#928374  9:#fb4934 10:#b8bb26 11:#fabd2f
+	 * 12:#83a598 13:#d3869b 14:#8ec07c 15:#ebdbb2
+	 * 256:#add8e6  257:#555555  258:#282828  259:#ffffff
+	 */
 };
 
 
