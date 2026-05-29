@@ -1118,12 +1118,13 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_MonBrightnessUp,  spawn,        {.v = (const char*[]){ "light", "-A", "5", NULL } } },
 	{ 0,                            XF86XK_MonBrightnessDown,spawn,        {.v = (const char*[]){ "light", "-U", "5", NULL } } },
 
-	/* Screenshots */
-	{ 0,                            XK_Print,      spawn,                  {.v = (const char*[]){ "screenshot", NULL } } },
-	{ ShiftMask,                    XK_Print,      spawn,                  {.v = (const char*[]){ "screenshot", "select", NULL } } },
+	/* Screenshots and recording */
+	{ 0,                            XK_Print,      spawn,                  {.v = (const char*[]){ "snip", NULL } } },
+	{ ShiftMask,                    XK_Print,      spawn,                  {.v = (const char*[]){ "snip", "full", NULL } } },
 	{ MODKEY,                       XK_Print,      spawn,                  {.v = (const char*[]){ "record", NULL } } },
 	{ MODKEY|ShiftMask,             XK_Print,      spawn,                  {.v = (const char*[]){ "record", "-stop", NULL } } },
-	{ MODKEY|ShiftMask,             XK_s,          spawn,                  {.v = (const char*[]){ "screenshot", "select", NULL } } },
+	{ MODKEY,                       XK_s,          spawn,                  {.v = (const char*[]){ "snip", NULL } } },
+	{ MODKEY|ShiftMask,             XK_s,          spawn,                  {.v = (const char*[]){ "snip", "full", NULL } } },
 
 	/* Applications */
 	{ MODKEY,                       XK_slash,      spawn,                  {.v = (const char*[]){ "dkymap", NULL } } },
@@ -1131,7 +1132,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } },
 	{ MODKEY,                       XK_b,          spawn,                  {.v = (const char*[]){ "dbrowse", NULL } } },
 	{ MODKEY,                       XK_w,          spawn,                  {.v = (const char*[]){ "tome", "-dmenu", "-edit", NULL } } },
-	{ MODKEY,                       XK_r,          spawn,                  {.v = (const char*[]){ "dread", NULL } } },
+	{ MODKEY,                       XK_r,          spawn,                  {.v = (const char*[]){ "record", NULL } } },
 	{ MODKEY,                       XK_n,          spawn,                  {.v = (const char*[]){ "dnotes", NULL } } },
 	{ MODKEY,                       XK_e,          spawn,                  {.v = (const char*[]){ "tome", "-dmenu", "-data", NULL } } },
 	{ MODKEY,                       XK_c,          spawn,                  {.v = (const char*[]){ "tome", "-dmenu", "-create", NULL } } },
@@ -1190,7 +1191,7 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_Down,       placedir,               {.i = 3 } }, // down
 	#endif // PLACEDIR_PATCH
 	#if SWAPFOCUS_PATCH && PERTAG_PATCH
-	{ MODKEY,                       XK_s,          swapfocus,              {.i = -1 } },
+	/* { MODKEY,                       XK_s,          swapfocus,              {.i = -1 } }, */ // removed: conflicts with snip, unused
 	#endif // SWAPFOCUS_PATCH
 	#if SWITCHCOL_PATCH
 	{ MODKEY,                       XK_v,          switchcol,              {0} },
