@@ -15,7 +15,7 @@
 static const unsigned int borderpx       = 0;   /* border pixel of windows */
 static const int corner_radius           = 10;
 #else
-static const unsigned int borderpx       = 3;   /* border pixel of windows */
+static const unsigned int borderpx       = 8;   /* border pixel of windows */
 #endif // ROUNDED_CORNERS_PATCH
 #if BAR_BORDER_PATCH
 /* This allows the bar border size to be explicitly set separately from borderpx.
@@ -188,8 +188,8 @@ static char normfloatcolor[]             = "#9FBCD9";
 
 static char selfgcolor[]                 = "#1f2933";
 static char selbgcolor[]                 = "#DEC292";
-static char selbordercolor[]             = "#008888"; /* plan 9 bluegreen focused (was #DEC292) */
-static char selfloatcolor[]              = "#008888"; /* plan 9 bluegreen (was #DEC292) */
+static char selbordercolor[]             = "#55aaaa"; /* plan 9 cyan focused (was #008888) */
+static char selfloatcolor[]              = "#55aaaa"; /* plan 9 cyan (was #008888) */
 
 static char titlenormfgcolor[]           = "#989fa6";
 static char titlenormbgcolor[]           = "#1f2933";
@@ -716,7 +716,6 @@ static const int scrollargs[][2] = {
 static const Layout layouts[] = {
 	/* symbol     arrange function, { nmaster, nstack, layout, master axis, stack axis, secondary stack axis, symbol func } */
 	{ "[]=",      flextile,         { -1, -1, SPLIT_VERTICAL, TOP_TO_BOTTOM, TOP_TO_BOTTOM, 0, NULL } }, // default tile layout
- 	{ "><>",      NULL,             {0} },    /* no layout function means floating behavior */
 	{ "[M]",      flextile,         { -1, -1, NO_SPLIT, MONOCLE, MONOCLE, 0, NULL } }, // monocle
 	{ "|||",      flextile,         { -1, -1, SPLIT_VERTICAL, LEFT_TO_RIGHT, TOP_TO_BOTTOM, 0, NULL } }, // columns (col) layout
 	{ ">M>",      flextile,         { -1, -1, FLOATING_MASTER, LEFT_TO_RIGHT, LEFT_TO_RIGHT, 0, NULL } }, // floating master
@@ -779,7 +778,7 @@ static const Layout layouts[] = {
 	#if TILE_LAYOUT
 	{ "[]=",      tile },    /* first entry is default */
 	#endif
-	{ "><>",      NULL },    /* no layout function means floating behavior */
+	/* removed: floating layout permanently disabled */
 	#if MONOCLE_LAYOUT
 	{ "[M]",      monocle },
 	#endif
@@ -1159,7 +1158,7 @@ static const Key keys[] = {
 	#if RIODRAW_PATCH
 	{ MODKEY|ControlMask,           XK_p,          riospawnsync,           {.v = dmenucmd } },
 	{ MODKEY|ControlMask,           XK_Return,     riospawn,               {.v = termcmd } },
-	{ MODKEY,                       XK_s,          rioresize,              {0} },
+	{ MODKEY|ControlMask,           XK_s,          rioresize,              {0} },
 	#endif // RIODRAW_PATCH
 	/* { MODKEY,                       XK_b,          togglebar,              {0} }, // removed: Super+b now dbrowse */
 	#if TOGGLETOPBAR_PATCH
@@ -1211,7 +1210,7 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_k,          pushup,                 {0} },
 	#endif // PUSH_PATCH / PUSH_NO_MASTER_PATCH
 	/* { MODKEY,                       XK_i,          incnmaster,             {.i = +1 } }, // removed: Super+i now reading mode */
-	{ MODKEY,                       XK_i,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
+	{ MODKEY,                       XK_i,          setlayout,              {.v = &layouts[13]} }, // reading mode (RRR)
 	/* { MODKEY,                       XK_d,          incnmaster,             {.i = -1 } }, // removed: Super+d now dlaunch */
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_i,          incnstack,              {.i = +1 } },
@@ -1333,10 +1332,10 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_F5,         xrdb,                   {.v = NULL } },
 	#endif // XRDB_PATCH | XRESOURCES_PATCH
 	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
-	{ MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[14]} }, // reading mode (RRR)
+	/* removed: floating layout binding permanently disabled */
+	{ MODKEY|ShiftMask,             XK_r,          setlayout,              {.v = &layouts[13]} }, // reading mode (RRR)
 	#if COLUMNS_LAYOUT
-	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} }, // removed: Super+c now tome -dmenu -create */
+	/* { MODKEY,                       XK_c,          setlayout,              {.v = &layouts[2]} }, // removed: Super+c now tome -dmenu -create */
 	#endif // COLUMNS_LAYOUT
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_t,          rotatelayoutaxis,       {.i = +1 } },   /* flextile, 1 = layout axis */
@@ -1580,7 +1579,7 @@ static const Key cmdkeys[] = {
 static const Command commands[] = {
 	/* modifier (4 keys)                          keysyms (4 keys)                                function         argument */
 	{ {ControlMask, ShiftMask,  0,         0},    {XK_w,      XK_h,     0,         0},            setlayout,       {.v = &layouts[0]} },
-	{ {ControlMask, 0,          0,         0},    {XK_w,      XK_o,     0,         0},            setlayout,       {.v = &layouts[2]} },
+	{ {ControlMask, 0,          0,         0},    {XK_w,      XK_o,     0,         0},            setlayout,       {.v = &layouts[1]} },
 	{ {ControlMask, ShiftMask,  0,         0},    {XK_w,      XK_o,     0,         0},            onlyclient,      {0} },
 	{ {ControlMask, 0,          0,         0},    {XK_w,      XK_v,     0,         0},            setlayout,       {.v = &layouts[0]} },
 	{ {ControlMask, 0,          0,         0},    {XK_w,      XK_less,  0,         0},            setmfact,        {.f = -0.05} },
@@ -1610,7 +1609,7 @@ static const Button buttons[] = {
 	#if BAR_LAYOUTMENU_PATCH
 	{ ClkLtSymbol,          0,                   Button3,        layoutmenu,     {0} },
 	#else
-	{ ClkLtSymbol,          0,                   Button3,        setlayout,      {.v = &layouts[2]} },
+	{ ClkLtSymbol,          0,                   Button3,        setlayout,      {.v = &layouts[1]} },
 	#endif // BAR_LAYOUTMENU_PATCH
 	#if BAR_WINTITLEACTIONS_PATCH
 	{ ClkWinTitle,          0,                   Button1,        togglewin,      {0} },
