@@ -6,6 +6,11 @@
 #include <X11/Xft/Xft.h>
 
 #include "patches.h"
+
+#if PNG_IMAGES_PATCH
+#include <spng.h>
+#endif // PNG_IMAGES_PATCH
+
 #include "drw.h"
 #include "util.h"
 
@@ -646,6 +651,203 @@ no_match:
 	return x + (render ? w : 0);
 }
 #endif // PANGO_PATCH
+
+#if PNG_IMAGES_PATCH
+struct image_item {
+	const char *path;
+	int width;
+	int height;
+	char *buf;
+	Pixmap pixmap;
+	struct image_item *next;
+};
+
+static struct image_item *images = NULL;
+
+static struct image_item *
+load_image(Drw *drw, unsigned int maxw, unsigned int maxh, const char *path)
+{
+	FILE *png;
+	spng_ctx *ctx = NULL;
+	int ret = 0;
+	struct spng_ihdr ihdr;
+	struct spng_plte plte = {0};
+	struct spng_row_info row_info = {0};
+	char *spng_buf;
+	int fmt = SPNG_FMT_RGBA8;
+	int crop_width;
+	int crop_height;
+
+	struct image_item *image = ecalloc(1, sizeof(struct image_item));
+	image->path = path;
+	image->next = images;
+	images = image;
+
+	png = fopen(path, "rb");
+	if (png == NULL) {
+		fprintf(stderr, "error opening input file %s\n", path);
+		return NULL;
+	}
+
+	ctx = spng_ctx_new(0);
+	if (ctx == NULL) {
+		fprintf(stderr, "%s: spng_ctx_new() failed\n", path);
+		fclose(png);
+		return NULL;
+	}
+
+	spng_set_crc_action(ctx, SPNG_CRC_USE, SPNG_CRC_USE);
+
+	size_t limit = 1024 * 1024 * 64;
+	spng_set_chunk_limits(ctx, limit, limit);
+
+	spng_set_png_file(ctx, png);
+
+	ret = spng_get_ihdr(ctx, &ihdr);
+	if (ret) {
+		fprintf(stderr, "%s: spng_get_ihdr() error: %s\n", path, spng_strerror(ret));
+		spng_ctx_free(ctx);
+		fclose(png);
+		return NULL;
+	}
+
+	ret = spng_get_plte(ctx, &plte);
+	if (ret && ret != SPNG_ECHUNKAVAIL) {
+		fprintf(stderr, "%s: spng_get_plte() error: %s\n", path, spng_strerror(ret));
+		spng_ctx_free(ctx);
+		fclose(png);
+		return NULL;
+	}
+
+	size_t image_size, bytes_per_row;
+
+	ret = spng_decoded_image_size(ctx, fmt, &image_size);
+	if (ret) {
+		spng_ctx_free(ctx);
+		fclose(png);
+		return NULL;
+	}
+
+	spng_buf = malloc(image_size);
+	if (!spng_buf) {
+		spng_ctx_free(ctx);
+		fclose(png);
+		return NULL;
+	}
+
+	ret = spng_decode_image(ctx, NULL, 0, fmt, SPNG_DECODE_PROGRESSIVE);
+	if (ret) {
+		fprintf(stderr, "%s: progressive spng_decode_image() error: %s\n",
+		        path, spng_strerror(ret));
+		free(spng_buf);
+		spng_ctx_free(ctx);
+		fclose(png);
+		return NULL;
+	}
+
+	bytes_per_row = image_size / ihdr.height;
+	crop_width = MIN(ihdr.width, maxw);
+	crop_height = MIN(ihdr.height, maxh);
+
+	do {
+		ret = spng_get_row_info(ctx, &row_info);
+		if (ret)
+			break;
+		ret = spng_decode_row(ctx, spng_buf + row_info.row_num * bytes_per_row, bytes_per_row);
+	} while (!ret && row_info.row_num < (unsigned int)crop_height);
+
+	if (ret != SPNG_EOI && row_info.row_num < (unsigned int)crop_height)
+		fprintf(stderr, "%s: progressive decode error: %s\n", path, spng_strerror(ret));
+
+	image->buf = calloc(ihdr.width * crop_height * 4, sizeof(char));
+	for (unsigned int i = 0; i < ihdr.width * (unsigned int)crop_height; i++) {
+		/* RGBA to BGRA */
+		image->buf[i*4+2] = spng_buf[i*4+0];
+		image->buf[i*4+1] = spng_buf[i*4+1];
+		image->buf[i*4+0] = spng_buf[i*4+2];
+		image->buf[i*4+3] = spng_buf[i*4+3];
+	}
+	image->width = crop_width;
+	image->height = crop_height;
+
+	XImage *img = XCreateImage(drw->dpy, CopyFromParent, DefaultDepth(drw->dpy, drw->screen),
+	                           ZPixmap, 0, image->buf, ihdr.width, crop_height, 32, 0);
+	image->pixmap = XCreatePixmap(drw->dpy, drw->root, crop_width, crop_height, 24);
+	XPutImage(drw->dpy, image->pixmap, drw->gc, img, 0, 0, 0, 0, crop_width, crop_height);
+	free(spng_buf);
+	spng_ctx_free(ctx);
+	fclose(png);
+	return image;
+}
+
+void
+drw_image(Drw *drw, int *x, int *y, unsigned int *w, unsigned int *h,
+          unsigned int lrpad, unsigned int tbpad, const char *path, int vertical)
+{
+	struct image_item *image = NULL;
+	int render = *x || *y;
+	int crop_width, crop_height;
+
+	for (struct image_item *item = images; item != NULL; item = item->next) {
+		if (!strcmp(item->path, path)) {
+			image = item;
+			if (!image->buf)
+				goto file_error;
+			break;
+		}
+	}
+
+	if (!image && !(image = load_image(drw, *w, *h, path)))
+		goto file_error;
+
+	if (!render) {
+		*w = image->width;
+		*h = image->height;
+		return;
+	}
+
+	crop_width = MIN(image->width, (int)*w);
+	crop_height = MIN(image->height, (int)*h);
+	if (vertical)
+		*h = crop_height;
+	else
+		*w = crop_width;
+
+	XSetForeground(drw->dpy, drw->gc, drw->scheme[ColBg].pixel);
+	XFillRectangle(drw->dpy, drw->drawable, drw->gc, *x, *y, *w + lrpad, *h + tbpad);
+	XCopyArea(drw->dpy, image->pixmap, drw->drawable, drw->gc, 0, 0,
+	          crop_width, crop_height, *x + lrpad/2, *y + tbpad/2);
+
+	if (vertical)
+		*y += *h + tbpad;
+	else
+		*x += *w + lrpad;
+	return;
+
+file_error:
+	*w = *h = 0;
+}
+
+unsigned int
+drw_getimagewidth_clamp(Drw *drw, const char *path, unsigned int maxw, unsigned int maxh)
+{
+	int x = 0, y = 0;
+	unsigned int w = maxw, h = maxh;
+	if (drw && path && maxw && maxh)
+		drw_image(drw, &x, &y, &w, &h, 0, 0, path, 0);
+	return MIN(maxw, w);
+}
+
+unsigned int
+drw_getimageheight_clamp(Drw *drw, const char *path, unsigned int maxw, unsigned int maxh)
+{
+	int x = 0, y = 0;
+	unsigned int w = maxw, h = maxh;
+	if (drw && path && maxw && maxh)
+		drw_image(drw, &x, &y, &w, &h, 0, 0, path, 1);
+	return MIN(maxh, h);
+}
+#endif // PNG_IMAGES_PATCH
 
 void
 drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h)

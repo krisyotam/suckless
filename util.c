@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "patches.h"
 #include "util.h"
 
 void
@@ -34,3 +35,11 @@ ecalloc(size_t nmemb, size_t size)
 		die("calloc:");
 	return p;
 }
+
+#if PNG_IMAGES_PATCH
+int
+startswith(const char *prefix, const char *str)
+{
+	return strncmp(prefix, str, strlen(prefix)) == 0;
+}
+#endif // PNG_IMAGES_PATCH

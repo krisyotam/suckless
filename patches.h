@@ -179,3 +179,6 @@
 
 /* Position and width options. */
 #define XYW_PATCH 0
+
+/* PNG image preview support using libspng. */
+#define PNG_IMAGES_PATCH 1

@@ -101,6 +101,13 @@ int drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned in
 int drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lpad, const char *text, int invert);
 #endif // PANGO_PATCH
 
+#if PNG_IMAGES_PATCH
+/* Image abstraction */
+unsigned int drw_getimagewidth_clamp(Drw *drw, const char *path, unsigned int maxw, unsigned int maxh);
+unsigned int drw_getimageheight_clamp(Drw *drw, const char *path, unsigned int maxw, unsigned int maxh);
+void drw_image(Drw *drw, int *x, int *y, unsigned int *w, unsigned int *h, unsigned int lrpad, unsigned int tbpad, const char *path, int vertical);
+#endif // PNG_IMAGES_PATCH
+
 /* Map functions */
 void drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h);
 

@@ -11,3 +11,6 @@
 
 void die(const char *fmt, ...);
 void *ecalloc(size_t nmemb, size_t size);
+#if PNG_IMAGES_PATCH
+int startswith(const char *prefix, const char *str);
+#endif // PNG_IMAGES_PATCH
