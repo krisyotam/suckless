@@ -183,13 +183,13 @@ static char c000000[]                    = "#000000"; // placeholder value
 
 static char normfgcolor[]                = "#dae4ee";
 static char normbgcolor[]                = "#1f2933";
-static char normbordercolor[]            = "#9eeeee"; /* plan 9 pale cyan (was #1f2933) */
+static char normbordercolor[]            = "#55aaaa"; /* plan 9 teal unfocused */
 static char normfloatcolor[]             = "#9FBCD9";
 
 static char selfgcolor[]                 = "#1f2933";
 static char selbgcolor[]                 = "#DEC292";
-static char selbordercolor[]             = "#55aaaa"; /* plan 9 cyan focused (was #008888) */
-static char selfloatcolor[]              = "#55aaaa"; /* plan 9 cyan (was #008888) */
+static char selbordercolor[]             = "#9eeeee"; /* plan 9 pale cyan focused */
+static char selfloatcolor[]              = "#9eeeee"; /* plan 9 pale cyan focused */
 
 static char titlenormfgcolor[]           = "#989fa6";
 static char titlenormbgcolor[]           = "#1f2933";
