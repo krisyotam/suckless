@@ -29,7 +29,7 @@
 /* Patches */
 
 /* The alpha patch adds transparency for the terminal. */
-#define ALPHA_PATCH 1
+#define ALPHA_PATCH 0
 
 /* Alpha focus highlight - different opacity for focused/unfocused */
 #define ALPHA_FOCUS_HIGHLIGHT_PATCH 0
