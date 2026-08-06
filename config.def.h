@@ -533,13 +533,13 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "UTILITY", .isfloating = 1)
 	RULE(.wintype = WTYPE "TOOLBAR", .isfloating = 1)
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
-	RULE(.class = "Gimp", .tags = 1 << 8)
+	/* App tag rules: edit rules.json (no monitor — lands on selmon). Rebuild after changes. */
+	#include "rules.gen.h"
 	#if SWALLOW_PATCH
 	RULE(.class = "St", .isterminal = 1)
 	RULE(.title = "Event Tester", .noswallow = 1)
 	RULE(.instance = "floatterm", .class = "St", .isfloating = 1, .isterminal = 1)
 	RULE(.instance = "fzfmenu", .class = "St", .isfloating = 1, .isterminal = 1)
-	RULE(.instance = "bg", .class = "St", .tags = 1 << 7, .isterminal = 1)
 	#endif // SWALLOW_PATCH
 	#if RENAMED_SCRATCHPADS_PATCH
 	RULE(.instance = "spterm", .scratchkey = 's', .isfloating = 1)
