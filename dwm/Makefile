@@ -9,15 +9,19 @@ OBJ = ${SRC:.c=.o}
 # FreeBSD users, prefix all ifdef, else and endif statements with a . for this to work (e.g. .ifdef)
 
 ifdef YAJLLIBS
-all: dwm dwm-msg
+all: rules.gen.h dwm dwm-msg
 else
-all: dwm
+all: rules.gen.h dwm
 endif
+
+# App tag rules from rules.json (tag only; monitor always selmon).
+rules.gen.h: rules.json gen-rules.py
+	python3 gen-rules.py rules.json rules.gen.h
 
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-${OBJ}: config.h config.mk patches.h
+${OBJ}: config.h config.mk patches.h rules.gen.h
 
 config.h:
 	cp config.def.h $@
@@ -35,7 +39,7 @@ endif
 
 clean:
 	rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
-	rm -f dwm-msg
+	rm -f dwm-msg rules.gen.h
 
 dist: clean
 	mkdir -p dwm-${VERSION}
