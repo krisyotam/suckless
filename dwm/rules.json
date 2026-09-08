@@ -1,0 +1,14 @@
+[
+  {
+    "class": "Gimp",
+    "tag": 9,
+    "comment": "GNU Image Manipulation Program"
+  },
+  {
+    "class": "St",
+    "instance": "bg",
+    "tag": 8,
+    "terminal": true,
+    "comment": "st -n bg (background/workspace terminal)"
+  }
+]
