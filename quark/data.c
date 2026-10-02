@@ -90,6 +90,28 @@ html_escape(const char *src, char *dst, size_t dst_siz)
 	dst[j] = '\0';
 }
 
+/* Encode one filename as a relative URL path segment, not an HTML attribute.
+ * dst must have space for three bytes per source byte plus the terminator. */
+static void
+url_encode(const char *src, char *dst)
+{
+	static const char hex[] = "0123456789ABCDEF";
+	unsigned char c;
+
+	while ((c = (unsigned char)*src++)) {
+		if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+		    (c >= '0' && c <= '9') || c == '-' || c == '.' ||
+		    c == '_' || c == '~') {
+			*dst++ = c;
+		} else {
+			*dst++ = '%';
+			*dst++ = hex[c >> 4];
+			*dst++ = hex[c & 15];
+		}
+	}
+	*dst = '\0';
+}
+
 enum status
 data_prepare_dirlisting_buf(const struct response *res,
                             struct buffer *buf, size_t *progress)
@@ -98,6 +120,7 @@ data_prepare_dirlisting_buf(const struct response *res,
 	struct dirent **e;
 	size_t i;
 	int dirlen;
+	char uri[PATH_MAX /* > NAME_MAX */ * 3];
 	char esc[PATH_MAX /* > NAME_MAX */ * 6]; /* strlen("&...;") <= 6 */
 
 	/* reset buffer */
@@ -130,9 +153,10 @@ data_prepare_dirlisting_buf(const struct response *res,
 
 		/* entry line */
 		html_escape(e[i]->d_name, esc, sizeof(esc));
+		url_encode(e[i]->d_name, uri);
 		if (buffer_appendf(buf,
 		                   "<br />\n\t\t<a href=\"%s%s\">%s%s</a>",
-		                   esc,
+		                   uri,
 		                   (e[i]->d_type == DT_DIR) ? "/" : "",
 		                   esc,
 		                   suffix(e[i]->d_type))) {
